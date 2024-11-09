@@ -1,3 +1,3 @@
-const DB_NAME = "skyTextiles";
+const DB_NAME = "skytextiles";
 
 export { DB_NAME };

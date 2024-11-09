@@ -16,4 +16,12 @@ app.use(e.urlencoded({ extended: true, limit: "16kb" }));
 app.use(e.static("public"));
 app.use(cookieParser());
 
+//routes import
+import adminRouter from "./routes/admin.route.js";
+import blogRouter from "./routes/blog.route.js";
+
+//routes declaration
+app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/blog", blogRouter);
+
 export default app;
