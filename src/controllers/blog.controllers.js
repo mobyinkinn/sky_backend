@@ -5,11 +5,14 @@ import { Blog } from "../models/blog.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const createBlog = asyncHandler(async (req, res) => {
-  const { title, content } = req.body;
-  if (!title || !content) {
+  const { title, content, slug } = req.body;
+  if (!title || !content || !slug) {
     throw new ApiError(400, "Plese fill all the required fileds!!!");
   }
-
+  const existing = await Blog.findOne({ slug });
+  if (existing) {
+    throw new ApiError(400, "slug");
+  }
   const imageLocalPath = req.files?.image[0].path;
 
   if (!imageLocalPath) {
@@ -25,6 +28,7 @@ const createBlog = asyncHandler(async (req, res) => {
   const blog = await Blog.create({
     title,
     content,
+    slug,
     image: image.url,
   });
 
