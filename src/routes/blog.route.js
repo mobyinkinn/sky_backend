@@ -8,6 +8,7 @@ import {
   blockBlog,
   UnblockBlog,
   updateImage,
+  getBlogBySlug,
 } from "../controllers/blog.controllers.js";
 
 const router = Router();
@@ -20,6 +21,7 @@ router
   .post(upload.fields([{ name: "image", maxCount: 1 }]), updateImage);
 router.route("/get-all").get(getAllBlogs);
 router.route("/block-blog/:id").put(blockBlog);
+router.route("/get-by-slug/:slug").get(getBlogBySlug);
 router.route("/unblock-blog/:id").put(UnblockBlog);
 router.route("/delete/:id").delete(deleteBlog);
 router.route("/update/:id").post(updateBlog);
