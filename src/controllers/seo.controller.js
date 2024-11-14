@@ -16,7 +16,7 @@ const createMetadata = asyncHandler(async (req, res) => {
    }
   const Seo = await Metadata.create({
     title,
-    description,
+    description, 
     keywords,
     pagename,
   });
