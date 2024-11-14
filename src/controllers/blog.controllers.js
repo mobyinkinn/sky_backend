@@ -3,7 +3,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Blog } from "../models/blog.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
-import {validateMongoDbId} from "../utils/validateMongodbId.js";
+import { validateMongoDbId } from "../utils/validateMongodbId.js";
 
 const createBlog = asyncHandler(async (req, res) => {
   const { title, content, slug } = req.body;
@@ -71,11 +71,13 @@ const blockBlog = asyncHandler(async (req, res) => {
     );
 
     if (!blockblog) {
-      return res.status(404).json({ message: "Blog not found", statusCode:400 });
+      return res
+        .status(404)
+        .json({ message: "Blog not found", statusCode: 400 });
     }
     res.json({ message: "Blog Hide successfully", statusCode: 200 });
   } catch (error) {
-    console.error("Error blocking user:", error); 
+    console.error("Error blocking user:", error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -99,6 +101,7 @@ const UnblockBlog = asyncHandler(async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 const updateBlog = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { title, content, slug } = req.body;
@@ -121,24 +124,6 @@ const updateBlog = asyncHandler(async (req, res) => {
       }
     }
 
-    // Handle image update if a new image is provided
-    let image = blog.image;
-    if (req.files?.image) {
-      const imageLocalPath = req.files.image[0].path;
-      if (!imageLocalPath) {
-        return res.status(400).json({ message: "Image is required" });
-      }
-
-      // Upload the new image to Cloudinary
-      const uploadedImage = await uploadOnCloudinary(imageLocalPath);
-      if (!uploadedImage) {
-        return res.status(500).json({ message: "Image upload failed" });
-      }
-
-      // Update the image URL
-      image = uploadedImage.url;
-    }
-
     // Update the blog with the new data
     const updatedBlog = await Blog.findByIdAndUpdate(
       id,
@@ -146,7 +131,6 @@ const updateBlog = asyncHandler(async (req, res) => {
         title,
         content,
         slug,
-        image,
       },
       { new: true, runValidators: true }
     );
@@ -165,13 +149,36 @@ const updateBlog = asyncHandler(async (req, res) => {
   }
 });
 
+const updateImage = asyncHandler(async (req, res, next) => {
+  const imageLocalPath = req.files.image[0].path;
+  if (!imageLocalPath) {
+    throw new ApiError(400, "Image is required!!!");
+  }
 
+  const image = await uploadOnCloudinary(imageLocalPath);
 
+  if (!image) {
+    throw new ApiError(500, "Image failed to upload!!!");
+  }
+
+  const updatedBlog = await Blog.findByIdAndUpdate(
+    req.params.id,
+    {
+      image: image.url,
+    },
+    { new: true }
+  );
+
+  res
+    .status(200)
+    .json(new ApiResponse(200, "Image updated successfully", updatedBlog));
+});
 
 export {
   createBlog,
   getAllBlogs,
   updateBlog,
+  updateImage,
   blockBlog,
   UnblockBlog,
   deleteBlog,
