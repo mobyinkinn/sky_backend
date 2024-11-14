@@ -16,6 +16,10 @@ const blogSchema = new Schema(
       required: true,
       trim: true,
     },
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
     suggestedBlogs: {
       type: [Schema.Types.ObjectId],
       ref: "Blog",
