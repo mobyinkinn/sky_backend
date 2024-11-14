@@ -7,19 +7,21 @@ import {
   deleteBlog,
   blockBlog,
   UnblockBlog,
+  updateImage,
 } from "../controllers/blog.controllers.js";
-import { verifyJwt } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
 router
   .route("/create")
   .post(upload.fields([{ name: "image", maxCount: 1 }]), createBlog);
-
+router
+  .route("/update-image/:id")
+  .post(upload.fields([{ name: "image", maxCount: 1 }]), updateImage);
 router.route("/get-all").get(getAllBlogs);
 router.route("/block-blog/:id").put(blockBlog);
 router.route("/unblock-blog/:id").put(UnblockBlog);
-router.route("/update/:id").put(updateBlog);
 router.route("/delete/:id").delete(deleteBlog);
+router.route("/update/:id").post(updateBlog);
 
 export default router;

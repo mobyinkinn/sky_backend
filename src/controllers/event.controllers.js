@@ -1,16 +1,16 @@
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { Blog } from "../models/blog.model.js";
+import { Events } from "../models/event.model.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { validateMongoDbId } from "../utils/validateMongodbId.js";
 
-const createBlog = asyncHandler(async (req, res) => {
+const createEvent = asyncHandler(async (req, res) => {
   const { title, content, slug } = req.body;
   if (!title || !content || !slug) {
     throw new ApiError(400, "Plese fill all the required fileds!!!");
   }
-  const existing = await Blog.findOne({ slug });
+  const existing = await Events.findOne({ slug });
   if (existing) {
     throw new ApiError(400, "slug");
   }
@@ -26,93 +26,96 @@ const createBlog = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Image failed to upload!!!");
   }
 
-  const blog = await Blog.create({
+  const event = await Events.create({
     title,
     content,
     slug,
     image: image.url,
   });
 
-  if (!blog) {
-    throw new ApiError(500, "Something went wrong while uploading the blog!!!");
+  if (!event) {
+    throw new ApiError(
+      500,
+      "Something went wrong while uploading the event!!!"
+    );
   }
 
-  res.status(200).json(new ApiResponse(200, "Blog created!!!", blog));
+  res.status(200).json(new ApiResponse(200, "Event created!!!", event));
 });
 
-const getAllBlogs = asyncHandler(async (req, res) => {
-  const blogs = await Blog.find();
-  res.status(200).json(new ApiResponse(200, "Blogs found!!!", blogs));
+const getAllEvents = asyncHandler(async (req, res) => {
+  const events = await Events.find();
+  res.status(200).json(new ApiResponse(200, "Events found!!!", events));
 });
 
-// const updateBlog = asyncHandler(async (req, res) => {
+// const updateEvents = asyncHandler(async (req, res) => {
 //   const { title, content } = req.body;
 
 //   if (!title && !content) {
 //     throw new ApiError(400, "All fields are empty!!!");
 //   }
 
-//   const existingBlog = await Blog.findById(req.query.id);
+//   const existingEvents = await Events.findById(req.query.id);
 
-//   if (!existingBlog) {
-//     throw new ApiError(400, "No blog found!!!");
+//   if (!existingEvents) {
+//     throw new ApiError(400, "No event found!!!");
 //   }
 
 //   const filter = {};
 //   if (title) filter.title = title;
 //   if (content) filter.content = content;
 
-//   const updatedBlog = await Blog.findByIdAndUpdate(req.query.id, filter, {
+//   const updatedEvents = await Events.findByIdAndUpdate(req.query.id, filter, {
 //     new: true,
 //   });
 
 //   res
 //     .status(200)
-//     .json(new ApiResponse(200, "Blog updated successfully", updatedBlog));
+//     .json(new ApiResponse(200, "Events updated successfully", updatedEvents));
 // });
 
-const deleteBlog = asyncHandler(async (req, res) => {
+const deleteEvents = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
-    const deleteBlog = await Blog.findByIdAndDelete(id);
+    const deleteEvents = await Events.findByIdAndDelete(id);
     res.json({
-      deleteBlog,
+      deleteEvents,
       statusCode: 200,
     });
   } catch (error) {
     throw new Error(error);
   }
 });
-const blockBlog = asyncHandler(async (req, res) => {
+const blockEvents = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
   validateMongoDbId(id); // Make sure this function is correctly implemented
 
   try {
-    const blockblog = await Blog.findByIdAndUpdate(
+    const blockevent = await Events.findByIdAndUpdate(
       id,
       { isBlocked: true },
       { new: true }
     );
 
-    if (!blockblog) {
+    if (!blockevent) {
       return res
         .status(404)
-        .json({ message: "Blog not found", statusCode: 400 });
+        .json({ message: "Events not found", statusCode: 400 });
     }
-    res.json({ message: "Blog Hide successfully", statusCode: 200 });
+    res.json({ message: "Events Hide successfully", statusCode: 200 });
   } catch (error) {
     console.error("Error blocking user:", error);
     res.status(500).json({ message: error.message });
   }
 });
 
-const UnblockBlog = asyncHandler(async (req, res) => {
+const UnblockEvents = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
   try {
-    const unblock = await Blog.findByIdAndUpdate(
+    const unblock = await Events.findByIdAndUpdate(
       id,
       { isBlocked: false },
       { new: true }
@@ -120,38 +123,39 @@ const UnblockBlog = asyncHandler(async (req, res) => {
     if (!unblock) {
       return res
         .status(404)
-        .json({ message: "Blog not found", statusCode: 400 });
+        .json({ message: "Events not found", statusCode: 400 });
     }
-    res.json({ message: "Blog unhide successfully", statusCode: 200 });
+    res.json({ message: "Events unhide successfully", statusCode: 200 });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-const updateBlog = asyncHandler(async (req, res) => {
+const updateEvents = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { title, content, slug } = req.body;
 
+  console.log("id: ", id);
   // Validate MongoDB ID
   validateMongoDbId(id);
 
   try {
-    // Find the existing blog by ID
-    const blog = await Blog.findById(id);
-    if (!blog) {
-      return res.status(404).json({ message: "Blog not found" });
+    // Find the existing event by ID
+    const event = await Events.findById(id);
+    if (!event) {
+      return res.status(404).json({ message: "Events not found" });
     }
 
     // Check if the slug is being updated and already exists
-    if (slug && slug !== blog.slug) {
-      const existingSlug = await Blog.findOne({ slug });
+    if (slug && slug !== event.slug) {
+      const existingSlug = await Events.findOne({ slug });
       if (existingSlug) {
         return res.status(400).json({ message: "Slug already exists" });
       }
     }
 
-    // Update the blog with the new data
-    const updatedBlog = await Blog.findByIdAndUpdate(
+    // Update the event with the new data
+    const updatedEvents = await Events.findByIdAndUpdate(
       id,
       {
         title,
@@ -161,14 +165,14 @@ const updateBlog = asyncHandler(async (req, res) => {
       { new: true, runValidators: true }
     );
 
-    if (!updatedBlog) {
-      return res.status(404).json({ message: "Blog not found" });
+    if (!updatedEvents) {
+      return res.status(404).json({ message: "Events not found" });
     }
 
-    // Respond with the updated blog data
+    // Respond with the updated event data
     res.json({
-      message: "Blog updated successfully",
-      updatedBlog,
+      message: "Events updated successfully",
+      updatedEvents,
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -187,7 +191,7 @@ const updateImage = asyncHandler(async (req, res, next) => {
     throw new ApiError(500, "Image failed to upload!!!");
   }
 
-  const updatedBlog = await Blog.findByIdAndUpdate(
+  const updatedEvents = await Events.findByIdAndUpdate(
     req.params.id,
     {
       image: image.url,
@@ -197,15 +201,15 @@ const updateImage = asyncHandler(async (req, res, next) => {
 
   res
     .status(200)
-    .json(new ApiResponse(200, "Image updated successfully", updatedBlog));
+    .json(new ApiResponse(200, "Image updated successfully", updatedEvents));
 });
 
 export {
-  createBlog,
-  getAllBlogs,
-  updateBlog,
+  createEvent,
+  getAllEvents,
+  updateEvents,
   updateImage,
-  blockBlog,
-  UnblockBlog,
-  deleteBlog,
+  blockEvents,
+  UnblockEvents,
+  deleteEvents,
 };
