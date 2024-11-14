@@ -45,32 +45,6 @@ const getAllBlogs = asyncHandler(async (req, res) => {
   res.status(200).json(new ApiResponse(200, "Blogs found!!!", blogs));
 });
 
-// const updateBlog = asyncHandler(async (req, res) => {
-//   const { title, content } = req.body;
-
-//   if (!title && !content) {
-//     throw new ApiError(400, "All fields are empty!!!");
-//   }
-
-//   const existingBlog = await Blog.findById(req.query.id);
-
-//   if (!existingBlog) {
-//     throw new ApiError(400, "No blog found!!!");
-//   }
-
-//   const filter = {};
-//   if (title) filter.title = title;
-//   if (content) filter.content = content;
-
-//   const updatedBlog = await Blog.findByIdAndUpdate(req.query.id, filter, {
-//     new: true,
-//   });
-
-//   res
-//     .status(200)
-//     .json(new ApiResponse(200, "Blog updated successfully", updatedBlog));
-// });
-
 const deleteBlog = asyncHandler(async (req, res) => {
   const { id } = req.params;
   validateMongoDbId(id);
