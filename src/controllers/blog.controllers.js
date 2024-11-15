@@ -58,11 +58,10 @@ const deleteBlog = asyncHandler(async (req, res) => {
     throw new Error(error);
   }
 });
+
 const blockBlog = asyncHandler(async (req, res) => {
   const { id } = req.params;
-
   validateMongoDbId(id); // Make sure this function is correctly implemented
-
   try {
     const blockblog = await Blog.findByIdAndUpdate(
       id,
@@ -174,10 +173,27 @@ const updateImage = asyncHandler(async (req, res, next) => {
     .json(new ApiResponse(200, "Image updated successfully", updatedBlog));
 });
 
+const getBlogBySlug = asyncHandler(async (req, res) => {
+  const { slug } = req.params; // You can also use req.query.pagename if you want to pass it as a query parameter.
+
+  if (!slug) {
+    throw new ApiError(400, "Slug is required!");
+  }
+
+  const blog = await Blog.findOne({ slug });
+
+  if (!blog) {
+    throw new ApiError(404, "Blog not found for the specified slug!");
+  }
+
+  res.status(200).json(new ApiResponse(200, "Blog found!", blog));
+});
+
 export {
   createBlog,
   getAllBlogs,
   updateBlog,
+  getBlogBySlug,
   updateImage,
   blockBlog,
   UnblockBlog,
