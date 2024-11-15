@@ -23,6 +23,8 @@ import eventRouter from "./routes/event.route.js";
 import seorouter from "./routes/seo.route.js";
 import careersrouter from "./routes/careers.route.js";
 import careersformrouter from "./routes/careersform.route.js";
+import contactrouter from "./routes/contact.route.js";
+
 
 
 //routes declaration
@@ -32,6 +34,7 @@ app.use("/api/v1/blog", blogRouter);
 app.use("/api/v1/seo", seorouter);
 app.use("/api/v1/careers", careersrouter);
 app.use("/api/v1/careersForm", careersformrouter);
+app.use("/api/v1/contact", contactrouter);
 
 
 
