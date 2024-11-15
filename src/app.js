@@ -22,6 +22,8 @@ import blogRouter from "./routes/blog.route.js";
 import eventRouter from "./routes/event.route.js";
 import seorouter from "./routes/seo.route.js";
 import careersrouter from "./routes/careers.route.js";
+import careersformrouter from "./routes/careersform.route.js";
+
 
 //routes declaration
 app.use("/api/v1/admin", adminRouter);
@@ -29,6 +31,8 @@ app.use("/api/v1/event", eventRouter);
 app.use("/api/v1/blog", blogRouter);
 app.use("/api/v1/seo", seorouter);
 app.use("/api/v1/careers", careersrouter);
+app.use("/api/v1/careersForm", careersformrouter);
+
 
 
 export default app;
