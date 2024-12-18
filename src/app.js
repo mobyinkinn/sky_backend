@@ -25,8 +25,6 @@ import careersrouter from "./routes/careers.route.js";
 import careersformrouter from "./routes/careersform.route.js";
 import contactrouter from "./routes/contact.route.js";
 
-
-
 //routes declaration
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/event", eventRouter);

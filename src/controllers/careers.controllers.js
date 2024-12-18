@@ -8,6 +8,7 @@ import { validateMongoDbId } from "../utils/validateMongodbId.js";
 
  const createCareersData = asyncHandler(async(req,res)=>{
      const { title, description, location, type } = req.body;
+     console.log(req.body)
      if (!title || !description || !location || !type) {
        throw new ApiError(400, "Plese fill all the required fileds!!!");
      }
@@ -79,9 +80,54 @@ const updateCareersById = asyncHandler(async (req, res) => {
       new ApiResponse(200, "Metadata updated successfully!", updatedCareersdata)
     );
 });
+
+const blockCareer= asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongoDbId(id); // Make sure this function is correctly implemented
+  try {
+    const blogcareer = await Careers.findByIdAndUpdate(
+      id,
+      { isBlocked: true },
+      { new: true }
+    );
+
+    if (!blogcareer) {
+      return res
+        .status(404)
+        .json({ message: "Blog not found", statusCode: 400 });
+    }
+    res.json({ message: "Blog Hide successfully", statusCode: 200 });
+  } catch (error) {
+    console.error("Error blocking user:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+const UnblockCareer = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  validateMongoDbId(id);
+  try {
+    const Unblockareer = await Careers.findByIdAndUpdate(
+      id,
+      { isBlocked: false },
+      { new: true }
+    );
+    if (!Unblockareer) {
+      return res
+        .status(404)
+        .json({ message: "Blog not found", statusCode: 400 });
+    }
+    res.json({ message: "Blog unhide successfully", statusCode: 200 });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
  export {
    createCareersData,
    getCareersData,
    deletecareersbyId,
    updateCareersById,
+   UnblockCareer,
+   blockCareer,
  };

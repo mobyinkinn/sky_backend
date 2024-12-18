@@ -6,6 +6,10 @@ const careersSchema = new Schema({
   description: { type: String, required: true },
   type: { type: String, required: true },
   location: { type: String, required: true },
+  isBlocked: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const Careers = mongoose.model("Careers", careersSchema);
