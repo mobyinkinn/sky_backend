@@ -30,6 +30,11 @@ const blogSchema = new Schema(
       unique: true,
       trim: true,
     },
+    metatitle: { type: String, required: true },
+    description: { type: String, required: true },
+    keywords: { type: String, required: true },
+    h1: { type: String, required: true },
+    h2: { type: String, required: true },
   },
   { timestamps: true }
 );

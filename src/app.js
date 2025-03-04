@@ -24,6 +24,7 @@ import seorouter from "./routes/seo.route.js";
 import careersrouter from "./routes/careers.route.js";
 import careersformrouter from "./routes/careersform.route.js";
 import contactrouter from "./routes/contact.route.js";
+import newsletterRouter from "./routes/newsletter.route.js";
 
 //routes declaration
 app.use("/api/v1/admin", adminRouter);
@@ -34,6 +35,7 @@ app.use("/api/v1/careers", careersrouter);
 app.use("/api/v1/careersForm", careersformrouter);
 app.use("/api/v1/contact", contactrouter);
 
+app.use("/api/v1/newsletter", newsletterRouter);
 
 
 export default app;

@@ -6,8 +6,9 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { validateMongoDbId } from "../utils/validateMongodbId.js";
 
 const createBlog = asyncHandler(async (req, res) => {
-  const { title, content, slug } = req.body;
-  if (!title || !content || !slug) {
+  const { title, content, slug, h1, h2, metatitle, description, keywords } =
+    req.body;
+  if (!title || !content || !slug || !h1 || !h2 || !metatitle || !description || !keywords) {
     throw new ApiError(400, "Plese fill all the required fileds!!!");
   }
   const existing = await Blog.findOne({ slug });
@@ -31,6 +32,11 @@ const createBlog = asyncHandler(async (req, res) => {
     content,
     slug,
     image: image.url,
+    h1,
+    h2,
+    metatitle,
+    description,
+    keywords,
   });
 
   if (!blog) {
@@ -103,7 +109,8 @@ const UnblockBlog = asyncHandler(async (req, res) => {
 
 const updateBlog = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { title, content, slug } = req.body;
+  const { title, content, slug, h1, h2, metatitle, description, keywords } =
+    req.body;
 
   // Validate MongoDB ID
   validateMongoDbId(id);
@@ -130,6 +137,11 @@ const updateBlog = asyncHandler(async (req, res) => {
         title,
         content,
         slug,
+        h1,
+        h2,
+        metatitle,
+        description,
+        keywords,
       },
       { new: true, runValidators: true }
     );
