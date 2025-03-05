@@ -8,7 +8,7 @@ import { verifyJwt } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.route("/create").post(verifyJwt, createNewsletter);
+router.route("/create").post(createNewsletter);
 router.route("/get-all").get(getAllNewsletters);
 router.route("/delete").post(verifyJwt, deleteNewsletter);
 
