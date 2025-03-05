@@ -8,15 +8,20 @@ import {
   blockEvents,
   UnblockEvents,
   updateImage,
+  getEventById,
 } from "../controllers/event.controllers.js";
 import { verifyJwt } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router
-  .route("/create")
-  .post(upload.fields([{ name: "image", maxCount: 1 }]), createEvent);
-
+router.route("/create").post(
+  upload.fields([
+    { name: "images", maxCount: 6 },
+    { name: "image", maxCount: 1 },
+  ]),
+  createEvent
+);
+router.route("/get-by-slug").get(getEventById);
 router.route("/get-all").get(getAllEvents);
 router.route("/block-event/:id").put(blockEvents);
 router.route("/unblock-event/:id").put(UnblockEvents);

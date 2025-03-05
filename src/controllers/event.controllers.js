@@ -26,11 +26,33 @@ const createEvent = asyncHandler(async (req, res) => {
     throw new ApiError(500, "Image failed to upload!!!");
   }
 
+  const images = [];
+
+  if (req.files?.images.length === 0) {
+    throw new ApiError(400, "Images are requried");
+  }
+
+  for (let i = 0; i < req.files.images.length; i++) {
+    const image = await uploadOnCloudinary(req.files.images[i].path);
+    if (!image) {
+      throw new ApiError(
+        500,
+        "Something went wrong while uploading the images"
+      );
+    }
+    images.push(image.url);
+  }
+
+  if (images.length === 0) {
+    throw new ApiError(500, "Something went wrong while uploading the images");
+  }
+
   const event = await Events.create({
     title,
     content,
     slug,
     image: image.url,
+    images: images,
   });
 
   if (!event) {
@@ -41,6 +63,21 @@ const createEvent = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json(new ApiResponse(200, "Event created!!!", event));
+});
+
+const getEventById = asyncHandler(async (req, res) => {
+  const { slug } = req.query;
+
+  if (!slug) {
+    throw new ApiError(400, "Event is required!!!");
+  }
+
+  const event = await Events.findOne({ slug });
+  if (!event) {
+    throw new ApiError(400, "No Event found");
+  }
+
+  res.status(200).json(new ApiResponse(200, "Event by id!!!", event));
 });
 
 const getAllEvents = asyncHandler(async (req, res) => {
@@ -212,4 +249,5 @@ export {
   blockEvents,
   UnblockEvents,
   deleteEvents,
+  getEventById,
 };
