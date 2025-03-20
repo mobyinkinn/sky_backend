@@ -6,8 +6,8 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { validateMongoDbId } from "../utils/validateMongodbId.js";
 
 const createMetadata = asyncHandler(async (req, res) => {
-  const { title, description, keywords, pagename,h1,h2 } = req.body;
-  if (!title || !description || !keywords || !pagename || !h1 ||!h2) {
+  const { title, description, keywords, pagename,h1,h2,bold,italic } = req.body;
+  if (!title || !description || !keywords || !pagename || !h1 ||!h2 || !bold || !italic) {
     throw new ApiError(400, "Plese fill all the required fileds!!!");
   }
    const existing = await Metadata.findOne({ pagename });
@@ -16,11 +16,13 @@ const createMetadata = asyncHandler(async (req, res) => {
    }
   const Seo = await Metadata.create({
     title,
-    description, 
+    description,
     keywords,
     pagename,
     h1,
     h2,
+    bold,
+    italic,
   });
   if (!Seo) {
     throw new ApiError(500, "Something went wrong while uploading the blog!!!");
@@ -67,19 +69,20 @@ const deleteMetadataById = asyncHandler(async (req, res) => {
 
 const updateMetadataById = asyncHandler(async (req, res) => {
   const { id } = req.query; // You can also use req.body.id if you prefer sending it in the request body.
-  const { title, description, keywords, pagename, h1, h2 } = req.body;
+  const { title, description, keywords, pagename, h1, h2, bold, italic } =
+    req.body;
 
   // Validate MongoDB ObjectId
   validateMongoDbId(id);
 
-  if (!title && !description && !keywords && !pagename && !h1 && !h2) {
+  if (!title && !description && !keywords && !pagename && !h1 && !h2 && !bold && !italic) {
     throw new ApiError(400, "Please provide at least one field to update!");
   }
 
   // Find and update the metadata by ID
   const updatedMetadata = await Metadata.findByIdAndUpdate(
     id,
-    { title, description, keywords, pagename, h1, h2 },
+    { title, description, keywords, pagename, h1, h2, bold, italic },
     { new: true, runValidators: true }
   );
 

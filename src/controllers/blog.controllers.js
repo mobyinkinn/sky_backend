@@ -6,14 +6,24 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { validateMongoDbId } from "../utils/validateMongodbId.js";
 
 const createBlog = asyncHandler(async (req, res) => {
-  const { title, content, slug, h1, h2, metatitle, description, keywords } =
-    req.body;
-  if (!title || !content || !slug || !h1 || !h2 || !metatitle || !description || !keywords) {
+  const {
+    title,
+    content,
+    slug,
+    h1,
+    h2,
+    metatitle,
+    description,
+    keywords,
+    bold,
+    italic,
+  } = req.body;
+  if (!title || !content || !slug || !h1 || !h2 || !metatitle || !description || !keywords||  !bold ||!italic) {
     throw new ApiError(400, "Plese fill all the required fileds!!!");
   }
   const existing = await Blog.findOne({ slug });
   if (existing) {
-    throw new ApiError(400, "slug");
+    throw new ApiError(400, "slug already exist, please check");
   }
   const imageLocalPath = req.files?.image[0].path;
 
@@ -37,6 +47,8 @@ const createBlog = asyncHandler(async (req, res) => {
     metatitle,
     description,
     keywords,
+    bold,
+    italic
   });
 
   if (!blog) {
@@ -142,6 +154,8 @@ const updateBlog = asyncHandler(async (req, res) => {
         metatitle,
         description,
         keywords,
+        bold,
+        italic,
       },
       { new: true, runValidators: true }
     );

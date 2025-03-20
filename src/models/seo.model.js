@@ -8,6 +8,8 @@ const MetadataSchema = new Schema({
   pagename: { type: String, required: true },
   h1: { type: String, required: true },
   h2: { type: String, required: true },
+  bold: { type: String, required: true },
+  italic: { type: String, required: true },
 });
 
 export const Metadata = mongoose.model("Metadata", MetadataSchema);

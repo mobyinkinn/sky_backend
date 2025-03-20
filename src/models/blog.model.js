@@ -35,6 +35,8 @@ const blogSchema = new Schema(
     keywords: { type: String, required: true },
     h1: { type: String, required: true },
     h2: { type: String, required: true },
+    bold: { type: String, required: true },
+    italic: { type: String, required: true },
   },
   { timestamps: true }
 );
