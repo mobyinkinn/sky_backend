@@ -121,7 +121,7 @@ const UnblockBlog = asyncHandler(async (req, res) => {
 
 const updateBlog = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { title, content, slug, h1, h2, metatitle, description, keywords } =
+  const { title, content, slug, h1, h2, metatitle, description, keywords, bold, italic } =
     req.body;
 
   // Validate MongoDB ID
